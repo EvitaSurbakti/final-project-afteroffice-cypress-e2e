@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dokumentasi cypress-final-afteroffice</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1f2933; --muted: #5f6c7b; --line: #e3e8ee;
+    --accent: #0f766e; --accent-soft: #e6f4f2; --code-bg: #f4f6f8; --warn: #b45309; --warn-bg: #fef6e7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12171c; --fg: #e4e9ee; --muted: #9aa7b4; --line: #27313b;
+      --accent: #4fd1c5; --accent-soft: #15302d; --code-bg: #1b232b; --warn: #f6ad55; --warn-bg: #2e2412;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .layout { display: flex; max-width: 1100px; margin: 0 auto; }
+  nav { position: sticky; top: 0; align-self: flex-start; width: 230px; padding: 32px 16px; height: 100vh; overflow-y: auto; border-right: 1px solid var(--line); flex-shrink: 0; }
+  nav strong { display: block; margin-bottom: 12px; font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  nav a { display: block; padding: 4px 0; color: var(--fg); text-decoration: none; font-size: 15px; }
+  nav a:hover { color: var(--accent); }
+  main { padding: 32px 32px 80px; min-width: 0; flex: 1; }
+  h1 { font-size: 2rem; margin: 0 0 4px; }
+  h2 { margin-top: 48px; padding-bottom: 6px; border-bottom: 1px solid var(--line); font-size: 1.4rem; scroll-margin-top: 16px; }
+  h3 { margin-top: 28px; font-size: 1.1rem; }
+  .lead { color: var(--muted); margin-top: 0; }
+  code { background: var(--code-bg); padding: 1px 6px; border-radius: 4px; font: 0.9em ui-monospace, Consolas, monospace; }
+  pre { background: var(--code-bg); padding: 14px 16px; border-radius: 8px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 15px; display: block; overflow-x: auto; }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--accent-soft); }
+  .note { background: var(--warn-bg); border-left: 4px solid var(--warn); padding: 10px 16px; border-radius: 4px; margin: 16px 0; }
+  .note b { color: var(--warn); }
+  .tag { display: inline-block; background: var(--accent-soft); color: var(--accent); padding: 0 8px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+  ol li, ul li { margin: 4px 0; }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    nav { position: static; width: auto; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 16px; }
+    main { padding: 24px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+  <strong>Daftar Isi</strong>
+  <a href="#ringkasan">Ringkasan</a>
+  <a href="#struktur">Struktur Proyek</a>
+  <a href="#setup">Instalasi &amp; Menjalankan</a>
+  <a href="#konfigurasi">Konfigurasi</a>
+  <a href="#arsitektur">Arsitektur (POM)</a>
+  <a href="#skenario">Skenario Pengujian</a>
+  <a href="#fixtures">Fixtures</a>
+  <a href="#laporan">Laporan &amp; Video</a>
+</nav>
+<main>
+
+<h1>cypress-final-afteroffice</h1>
+<p class="lead">Proyek otomasi pengujian end-to-end (E2E) berbasis Cypress untuk tiga alur situs publik: Agoda, Amazon, dan YouTube.</p>
+
+<h2 id="ringkasan">Ringkasan</h2>
+<table>
+  <tr><th>Item</th><th>Nilai</th></tr>
+  <tr><td>Framework</td><td>Cypress <code>^16.2.0</code></td></tr>
+  <tr><td>Reporter</td><td><code>cypress-mochawesome-reporter ^5.0.0</code> (laporan HTML)</td></tr>
+  <tr><td>Pola desain</td><td>Page Object Model (POM)</td></tr>
+  <tr><td>Viewport default</td><td>1920 × 1080</td></tr>
+  <tr><td>Rekaman video</td><td>Aktif (<code>video: true</code>)</td></tr>
+  <tr><td>Timeout perintah</td><td>10.000 ms</td></tr>
+  <tr><td>Modul</td><td>CommonJS (<code>"type": "commonjs"</code>)</td></tr>
+</table>
+<p>Tiga skenario yang tersedia:</p>
+<ul>
+  <li><b>Task 1 – Agoda:</b> memesan tiket pesawat Jakarta → Singapura paling awal untuk besok dengan Malaysia Airlines.</li>
+  <li><b>Task 2 – Amazon:</b> mencari “chair”, mengurutkan dari harga tertinggi, lalu memvalidasi detail produk.</li>
+  <li><b>Task 3 – YouTube:</b> membuka video trending ke-3 di kategori Game dan memvalidasi judul serta nama channel.</li>
+</ul>
+
+<h2 id="struktur">Struktur Proyek</h2>
+<pre><code>cypress-final-afteroffice/
+├── cypress.config.js          # konfigurasi Cypress, reporter, flag browser
+├── package.json
+├── .gitignore                 # node_modules, videos, screenshots, reports, downloads
+└── cypress/
+    ├── e2e/
+    │   ├── pages/             # Page Object (locator &amp; aksi)
+    │   │   ├── AgodaPages.js
+    │   │   ├── AmazonPages.js
+    │   │   └── YoutubePages.js
+    │   └── tests/             # spec file (skenario &amp; assertion)
+    │       ├── agoda.cy.js
+    │       ├── amazon.cy.js
+    │       └── youtube.cy.js
+    ├── fixtures/
+    │   ├── passenger.json     # data penumpang untuk Agoda
+    │   └── example.json       # bawaan Cypress (tidak dipakai)
+    └── support/
+        ├── e2e.js             # dimuat otomatis sebelum setiap spec
+        └── commands.js        # tempat custom command (masih kosong)</code></pre>
+
+<h2 id="setup">Instalasi &amp; Menjalankan</h2>
+<h3>Prasyarat</h3>
+<ul>
+  <li>Node.js (versi yang didukung Cypress 16) dan npm</li>
+  <li>Koneksi internet (pengujian menyasar situs live)</li>
+  <li>Browser Chrome/Edge/Electron</li>
+</ul>
+<h3>Instalasi</h3>
+<pre><code>npm install</code></pre>
+<h3>Membuka Cypress (mode interaktif)</h3>
+<pre><code>npx cypress open</code></pre>
+<h3>Menjalankan headless</h3>
+<pre><code># semua spec
+npx cypress run
+
+# satu spec saja
+npx cypress run --spec "cypress/e2e/tests/agoda.cy.js"
+npx cypress run --spec "cypress/e2e/tests/amazon.cy.js"
+npx cypress run --spec "cypress/e2e/tests/youtube.cy.js"
+
+# memilih browser
+npx cypress run --browser chrome</code></pre>
+<div class="note"><b>Catatan:</b> script <code>npm test</code> di <code>package.json</code> masih placeholder (“no test specified”). Gunakan perintah <code>npx cypress ...</code> di atas.</div>
+
+<h2 id="konfigurasi">Konfigurasi</h2>
+<p>Seluruh konfigurasi ada di <code>cypress.config.js</code> pada blok <code>e2e</code>:</p>
+<table>
+  <tr><th>Opsi</th><th>Nilai</th><th>Keterangan</th></tr>
+  <tr><td><code>numTestsKeptInMemory</code></td><td>0</td><td>Mengurangi pemakaian memori browser.</td></tr>
+  <tr><td><code>viewportWidth / viewportHeight</code></td><td>1920 / 1080</td><td>Ukuran viewport default.</td></tr>
+  <tr><td><code>video</code></td><td>true</td><td>Merekam video setiap run.</td></tr>
+  <tr><td><code>reporter</code></td><td>cypress-mochawesome-reporter</td><td>Menghasilkan laporan HTML.</td></tr>
+  <tr><td><code>defaultCommandTimeout</code></td><td>10000</td><td>Batas tunggu tiap perintah (ms).</td></tr>
+</table>
+
+<h3>Variabel <code>expose</code></h3>
+<p>URL dasar disimpan di <code>expose</code> dan dibaca lewat <code>Cypress.expose('nama')</code>.</p>
+<table>
+  <tr><th>Kunci</th><th>Nilai</th></tr>
+  <tr><td><code>agodaUrl</code></td><td><code>https://www.agoda.com</code></td></tr>
+  <tr><td><code>amazonUrl</code></td><td><code>https://www.amazon.com</code></td></tr>
+  <tr><td><code>youtubeUrl</code></td><td><code>https://www.youtube.com/?hl=id</code></td></tr>
+</table>
+
+<h3>Flag browser (<code>before:browser:launch</code>)</h3>
+<p>Ditambahkan untuk mencegah crash renderer/GPU di halaman video YouTube:</p>
+<ul>
+  <li><code>--autoplay-policy=user-gesture-required</code> – video tidak autoplay</li>
+  <li><code>--mute-audio</code></li>
+  <li><code>--disable-gpu</code></li>
+  <li><code>--disable-accelerated-video-decode</code></li>
+  <li><code>--disable-dev-shm-usage</code></li>
+</ul>
+
+<h2 id="arsitektur">Arsitektur (Page Object Model)</h2>
+<p>Pemisahan tanggung jawab:</p>
+<ul>
+  <li><b>Page Object</b> (<code>cypress/e2e/pages/*.js</code>) – kelas berisi selector dan aksi halaman; setiap file mengekspor satu instance (<code>export default new XxxPage()</code>).</li>
+  <li><b>Spec</b> (<code>cypress/e2e/tests/*.cy.js</code>) – menyusun langkah skenario dan menulis assertion.</li>
+  <li><b>Alias</b> – nilai yang dibaca di satu halaman (nama, harga, jam) disimpan dengan <code>cy.wrap(...).as('nama')</code> lalu dibandingkan di halaman berikutnya via <code>cy.get('@nama')</code>.</li>
+</ul>
+
+<h3>Method per Page Object</h3>
+<table>
+  <tr><th>Page Object</th><th>Method utama</th></tr>
+  <tr><td><code>AgodaPage</code></td><td><code>visit</code>, <code>selectFlightMenu</code>, <code>fillRoute</code>, <code>selectTomorrowDate</code>, <code>clickSearch</code>, <code>filterMalaysiaAirlines</code>, <code>filterEarliestFlight</code>, <code>selectMalaysiaAirlines</code>, <code>fillPassengerDetails</code>, <code>proceedToPayment</code>, <code>getCheckoutPassengerName</code>, <code>getCheckoutPassengerDetail</code>, <code>getDepartureTimeElement</code>, <code>getArrivalTimeElement</code></td></tr>
+  <tr><td><code>AmazonPage</code></td><td><code>visit</code>, <code>searchItem</code>, <code>sortHighestPrice</code>, <code>filterFreeShipping</code>, <code>selectRightMostNonAdItem</code></td></tr>
+  <tr><td><code>YoutubePage</code></td><td><code>visit</code>, <code>clickGuideButton</code>, <code>clickShowMore</code>, <code>clickShowLess</code>, <code>clickGamingMenu</code>, <code>clickViewAllTrending</code>, <code>getTrendingVideo</code>, <code>verifyVideoDetails</code></td></tr>
+</table>
+
+<h2 id="skenario">Skenario Pengujian</h2>
+
+<h3>Task 1 – Booking Flight Agoda <span class="tag">agoda.cy.js</span></h3>
+<ol>
+  <li>Buka Agoda, pilih menu <b>Flights</b>.</li>
+  <li>Isi rute Jakarta → Singapore.</li>
+  <li>Pilih tanggal <b>besok</b> (dihitung dinamis, format <code>YYYY-MM-DD</code>), klik Search.</li>
+  <li>Filter maskapai Malaysia Airlines (kode <code>MH</code>), urutkan berdasarkan waktu keberangkatan, simpan jam berangkat &amp; tiba tiket pertama.</li>
+  <li>Pilih tiket Malaysia Airlines, isi data penumpang dari fixture <code>passenger</code>, simpan total harga.</li>
+  <li>Lanjut ke pembayaran.</li>
+</ol>
+<p><b>Assertion di halaman pembayaran:</b></p>
+<ul>
+  <li>Total harga sama dengan di halaman data penumpang.</li>
+  <li>Nama penumpang = <code>firstName + ' ' + lastName</code>.</li>
+  <li>Detail penumpang memuat nomor paspor.</li>
+  <li>Jam keberangkatan dan kedatangan sama dengan yang dipilih.</li>
+</ul>
+
+<h3>Task 2 – Search Item Amazon <span class="tag">amazon.cy.js</span></h3>
+<ol>
+  <li>Set viewport 1920×1080, buka Amazon.</li>
+  <li>Cari “chair”, urutkan harga tertinggi (<code>price-desc-rank</code>), aktifkan filter Free Shipping.</li>
+  <li>Pilih item non-iklan (tanpa label “Sponsored”) pada baris pertama, simpan nama &amp; harga.</li>
+</ol>
+<p><b>Assertion di halaman detail:</b> <code>#titleSection</code> memuat nama yang disimpan, dan harga (<code>#apex-pricetopay-accessibility-label</code>) memuat harga yang disimpan.</p>
+
+<h3>Task 3 – YouTube Gaming <span class="tag">youtube.cy.js</span></h3>
+<ol>
+  <li>Set viewport 1280×720, buka YouTube (bahasa Indonesia).</li>
+  <li>Buka sidebar (tombol “Panduan”), klik “Tampilkan lebih banyak”.</li>
+  <li>Pilih menu <b>Game</b>, klik “Lihat semua” pada section “Video trending”.</li>
+  <li>Ambil video ke-3 (index 2), simpan judul &amp; channel, lalu klik video.</li>
+</ol>
+<p><b>Assertion di halaman video:</b> judul (<code>#title &gt; h1 &gt; yt-formatted-string</code>) dan channel (<code>#owner-name &gt; a</code>) sama dengan yang disimpan.</p>
+
+<div class="note"><b>Perhatian:</b> <code>agoda.cy.js</code> dan <code>youtube.cy.js</code> memakai <code>it.only</code>, sehingga hanya test itu yang dijalankan di spec masing-masing. Hapus <code>.only</code> bila ingin menjalankan semua test di file tersebut.</div>
+
+<h2 id="fixtures">Fixtures</h2>
+<h3><code>cypress/fixtures/passenger.json</code></h3>
+<p>Data dummy penumpang yang diteruskan ke <code>AgodaPage.fillPassengerDetails()</code>:</p>
+<table>
+  <tr><th>Field</th><th>Contoh</th></tr>
+  <tr><td><code>firstName</code></td><td>Evita</td></tr>
+  <tr><td><code>lastName</code></td><td>Surbakti</td></tr>
+  <tr><td><code>email</code></td><td>evita@email.com</td></tr>
+  <tr><td><code>phone</code></td><td>81234567890</td></tr>
+  <tr><td><code>bornDay</code> / <code>bornYear</code></td><td>15 / 1998</td></tr>
+  <tr><td><code>passportNumber</code></td><td>A1234567</td></tr>
+  <tr><td><code>passportExpiryDay</code> / <code>passportExpiryYear</code></td><td>20 / 2030</td></tr>
+</table>
+<p>Bulan lahir dan bulan kedaluwarsa paspor saat ini di-hardcode ke <b>July</b> pada Page Object; negara kebangsaan dan penerbit paspor di-hardcode ke <b>Afghanistan</b>.</p>
+
+<h2 id="laporan">Laporan &amp; Video</h2>
+<ul>
+  <li>Video setiap run disimpan di <code>cypress/videos/</code>.</li>
+  <li>Screenshot saat gagal disimpan di <code>cypress/screenshots/</code>.</li>
+  <li>Laporan HTML mochawesome dihasilkan di <code>cypress/reports/</code> (biasanya <code>cypress/reports/html/index.html</code>).</li>
+  <li>Folder-folder tersebut ada di <code>.gitignore</code> karena dibuat ulang tiap run.</li>
+</ul>
+
+
+</main>
+</div>
+</body>
+</html>
