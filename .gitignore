@@ -1,0 +1,7 @@
+node_modules/
+
+# Output Cypress (dihasilkan ulang setiap run)
+cypress/videos/
+cypress/screenshots/
+cypress/reports/
+cypress/downloads/

@@ -1,0 +1,11 @@
+{
+  "firstName": "Evita",
+  "lastName": "Surbakti",
+  "email": "evita@email.com",
+  "phone": "81234567890",
+  "bornDay": "15",
+  "bornYear": "1998",
+  "passportNumber": "A1234567",
+  "passportExpiryDay": "20",
+  "passportExpiryYear": "2030"
+}
